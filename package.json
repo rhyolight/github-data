@@ -4,7 +4,7 @@
   "description": "Tools for running git commands without git.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "istanbul cover _mocha -- --recursive -R spec && istanbul report text-summary > coverage/summary.txt && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,15 @@
   },
   "homepage": "https://github.com/rhyolight/github-data",
   "dependencies": {
-    "github": "^0.2.3"
+    "github": "^0.2.3",
+    "lodash": "^3.6.0"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
+    "mocha": "^2.2.4",
+    "proxyquire": "^1.4.0",
+    "sinon": "^1.14.1"
   }
 }
