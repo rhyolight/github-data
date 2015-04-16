@@ -13,7 +13,7 @@ describe('blob object', function() {
             getBlob: function(params, callback) {
                 expect(params.user).to.equal('my-organization');
                 expect(params.repo).to.equal('my-repository');
-                expect(params.sha).to.equal('5b4bb01e0edcff42c30c93e91ed66171947b99e3');
+                expect(params.sha).to.equal('e0d794006138f680793d4cb6c431e3ba381d483d');
                 callback(null, mockBlob);
             }
         }
@@ -24,7 +24,7 @@ describe('blob object', function() {
     describe('when constructed', function() {
 
         it('makes essential properties accessible', function() {
-            expect(blob.sha).to.equal('5b4bb01e0edcff42c30c93e91ed66171947b99e3');
+            expect(blob.sha).to.equal('e0d794006138f680793d4cb6c431e3ba381d483d');
         });
 
     });

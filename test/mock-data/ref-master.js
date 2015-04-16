@@ -1,10 +1,9 @@
-console.log('in mock ref master');
 module.exports = {
     ref: "refs/heads/master",
-        url: "https://api.github.com/repos/rhyolight/sprinter.js/git/refs/heads/master",
+    url: "https://api.github.com/repos/numenta/experiments/git/refs/heads/master",
     object: {
-        sha: "6b8cd6ed85a41d407787090c74a76efb981d13e0",
+        sha: "a075829d6b803ce74acf407b6d19e8434f1cf653",
         type: "commit",
-        url: "https://api.github.com/repos/rhyolight/sprinter.js/git/commits/6b8cd6ed85a41d407787090c74a76efb981d13e0"
+        url: "https://api.github.com/repos/numenta/experiments/git/commits/a075829d6b803ce74acf407b6d19e8434f1cf653"
     }
 };

@@ -1,6 +1,5 @@
 var assert = require('chai').assert
   , expect = require('chai').expect
-  //, proxyquire = require('proxyquire')
   , Branch = require('../lib/branch')
   , Commit = require('../lib/commit')
   , mockRefMaster = require('./mock-data/ref-master')
@@ -16,7 +15,7 @@ describe('branch object', function() {
             getCommit: function(params, callback) {
                 expect(params.user).to.equal('my-organization');
                 expect(params.repo).to.equal('my-repository');
-                expect(params.sha).to.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
+                expect(params.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
                 callback(null, mockCommit);
             }
         }
@@ -27,7 +26,7 @@ describe('branch object', function() {
 
         it('makes essential properties accessible', function() {
             expect(branch.ref).to.equal('refs/heads/master');
-            expect(branch.sha).to.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
+            expect(branch.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
         });
 
     });

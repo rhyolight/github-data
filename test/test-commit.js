@@ -15,7 +15,7 @@ describe('commit object', function() {
             getTree: function(params, callback) {
                 expect(params.user).to.equal('my-organization');
                 expect(params.repo).to.equal('my-repository');
-                expect(params.sha).to.equal('4fa45ccb8b07608663be1af7700432125505d0ec');
+                expect(params.sha).to.equal('fbb4439a956a45fa7a5ea52f44f8a095502e3c6b');
                 callback(null, mockTree);
             }
         }
@@ -25,23 +25,23 @@ describe('commit object', function() {
     describe('when constructed', function() {
 
         it('makes essential properties accessible', function() {
-            expect(commit.sha).to.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
-            expect(commit.htmlUrl).to.equal("https://github.com/rhyolight/sprinter.js/commit/6b8cd6ed85a41d407787090c74a76efb981d13e0");
+            expect(commit.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
+            expect(commit.htmlUrl).to.equal("https://github.com/numenta/experiments/commit/a075829d6b803ce74acf407b6d19e8434f1cf653");
             expect(commit.tree).to.deep.equal({
-                sha: "4fa45ccb8b07608663be1af7700432125505d0ec",
-                url: "https://api.github.com/repos/rhyolight/sprinter.js/git/trees/4fa45ccb8b07608663be1af7700432125505d0ec"
+                sha: "fbb4439a956a45fa7a5ea52f44f8a095502e3c6b",
+                url: "https://api.github.com/repos/numenta/experiments/git/trees/fbb4439a956a45fa7a5ea52f44f8a095502e3c6b"
             });
             expect(commit.author).to.deep.equal({
                 name: "Matthew Taylor",
                 email: "matt@numenta.org",
-                date: "2015-04-03T20:23:56Z"
+                date: "2015-04-16T19:46:09Z"
             });
             expect(commit.committer).to.deep.equal({
                 name: "Matthew Taylor",
                 email: "matt@numenta.org",
-                date: "2015-04-03T20:23:56Z"
+                date: "2015-04-16T19:46:09Z"
             });
-            expect(commit.message).to.equal("Merge pull request #42 from rhyolight/add-deeper-pr-data Adding \"mergeIssueProperties\" option");
+            expect(commit.message).to.equal("nothing much");
         });
 
     });
