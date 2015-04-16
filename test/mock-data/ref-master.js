@@ -1,3 +1,4 @@
+console.log('in mock ref master');
 module.exports = {
     ref: "refs/heads/master",
         url: "https://api.github.com/repos/rhyolight/sprinter.js/git/refs/heads/master",

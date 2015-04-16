@@ -1,5 +1,4 @@
-var _ = require('lodash')
-  , assert = require('chai').assert
+var assert = require('chai').assert
   , expect = require('chai').expect
   , proxyquire = require('proxyquire')
   , Branch = require('../lib/branch')
@@ -76,7 +75,7 @@ describe('github-data', function() {
                     if (params.ref !== 'heads/master') {
                         return callback({"code":404,"message":"{\"message\":\"Not Found\",\"documentation_url\":\"https://developer.github.com/v3\"}"})
                     }
-                    callback();
+                    callback(null, mockRefMaster);
                 }
             }
         };
@@ -113,6 +112,8 @@ describe('github-data', function() {
             gd.getBranch('master', function(error, branch) {
                 assert.notOk(error);
                 expect(branch).to.be.instanceOf(Branch);
+                // TODO: Start here once Branch and Commit are complete.
+                //expect(branch).to.have.property('getFile');
                 done();
             });
         });
