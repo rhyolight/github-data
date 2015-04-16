@@ -16,6 +16,8 @@ describe('branch object', function() {
             getCommit: function(params, callback) {
                 expect(params.user).to.equal('my-organization');
                 expect(params.repo).to.equal('my-repository');
+                expect(params.sha).to.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
+                callback(null, mockCommit);
             }
         }
     };
@@ -24,23 +26,25 @@ describe('branch object', function() {
     describe('when constructed', function() {
 
         it('makes essential properties accessible', function() {
-            expect(branch.ref).to.be.equal('refs/heads/master');
-            expect(branch.sha).to.be.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
+            expect(branch.ref).to.equal('refs/heads/master');
+            expect(branch.sha).to.equal('6b8cd6ed85a41d407787090c74a76efb981d13e0');
         });
 
     });
 
-    it('can getCommit()', function() {
-        expect(branch).to.have.property('getCommit');
-        expect(branch.getCommit).to.be.instanceOf(Function);
+    describe('when getting commit', function() {
 
-        branch.getCommit(function(err, commit) {
-            assert.notOk(err);
-            expect(commit).to.be.instanceOf(Commit);
-            expect(commit).to.have.property('getTree');
-            done();
+        it('returns a Commit object', function(done) {
+            expect(branch).to.have.property('getCommit');
+            expect(branch.getCommit).to.be.instanceOf(Function);
 
+            branch.getCommit(function(err, commit) {
+                assert.notOk(err);
+                expect(commit).to.be.instanceOf(Commit);
+                done();
+            });
         });
+
     });
 
 });

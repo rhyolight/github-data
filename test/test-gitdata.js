@@ -112,8 +112,6 @@ describe('github-data', function() {
             gd.getBranch('master', function(error, branch) {
                 assert.notOk(error);
                 expect(branch).to.be.instanceOf(Branch);
-                // TODO: Start here once Branch and Commit are complete.
-                //expect(branch).to.have.property('getFile');
                 done();
             });
         });
