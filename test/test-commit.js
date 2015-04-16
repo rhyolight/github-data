@@ -52,9 +52,9 @@ describe('commit object', function() {
             expect(commit).to.have.property('getTree');
             expect(commit.getTree).to.be.instanceOf(Function);
 
-            commit.getTree(function(err, commit) {
+            commit.getTree(function(err, tree) {
                 assert.notOk(err);
-                expect(commit).to.be.instanceOf(Tree);
+                expect(tree).to.be.instanceOf(Tree);
                 done();
             });
         });
