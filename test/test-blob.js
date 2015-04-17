@@ -35,7 +35,7 @@ describe('blob object', function() {
 
         it('allows retreival of utf-8 content', function() {
             var expectedContent = fs.readFileSync('./test/mock-data/README.md', 'utf-8')
-              , content = blob.getContent();
+              , content = blob.getContents();
             expect(content).to.equal(expectedContent);
         });
 
