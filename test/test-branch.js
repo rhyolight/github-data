@@ -85,7 +85,7 @@ describe('branch object', function() {
         });
 
         describe('when getting multiple files', function() {
-            // TODO: Come back to this after getting low-level blog retrieval working.
+            // TODO: Come back to this after testing file change commits.
         });
 
     });
@@ -140,7 +140,7 @@ describe('branch object', function() {
         });
 
         describe('when getting multiple files', function() {
-            // TODO: Come back to this after getting low-level blob retrieval working.
+            // TODO: Come back to this after testing file change commits.
         });
 
     });
