@@ -42,36 +42,6 @@ describe('tree object', function() {
 
     });
 
-    describe('when getting object by path', function() {
-
-        it('returns a Tree object for a tree path', function(done) {
-            tree.getObjectByPath('ci', function(error, object) {
-                expect(object).to.be.instanceOf(Tree);
-                done();
-            });
-        });
-
-        it('returns a Tree object for a tree path', function(done) {
-            tree.getObjectByPath('README.md', function(error, object) {
-                expect(object).to.be.instanceOf(Blob);
-                done();
-            });
-        });
-
-        it('returns appropriate error for a non-existant path', function(done) {
-            tree.getObjectByPath('noop', function(error) {
-                assert.ok(error, "Nonexistant object path should throw error");
-                expect(error).to.be.instanceOf(Error);
-                expect(error).to.have.property('message');
-                expect(error.message).to.equal('Object path "noop" does not exist.');
-                expect(error).to.have.property('code');
-                expect(error.code).to.equal(404);
-                done();
-            });
-        });
-
-    });
-
     describe('when inspecting object types', function() {
 
         it('knows a tree path', function() {
