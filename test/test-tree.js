@@ -39,6 +39,37 @@ describe('tree object', function() {
             assert.notOk(tree.truncated);
         });
 
+
+    });
+
+    describe('when getting object by path', function() {
+
+        it('returns a Tree object for a tree path', function(done) {
+            tree.getObjectByPath('ci', function(error, object) {
+                expect(object).to.be.instanceOf(Tree);
+                done();
+            });
+        });
+
+        it('returns a Tree object for a tree path', function(done) {
+            tree.getObjectByPath('README.md', function(error, object) {
+                expect(object).to.be.instanceOf(Blob);
+                done();
+            });
+        });
+
+        it('returns appropriate error for a non-existant path', function(done) {
+            tree.getObjectByPath('noop', function(error) {
+                assert.ok(error, "Nonexistant object path should throw error");
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Object path "noop" does not exist.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(404);
+                done();
+            });
+        });
+
     });
 
     describe('when inspecting object types', function() {
@@ -154,12 +185,24 @@ describe('tree object', function() {
 
         var tree = new Tree(mockTree, mockParent, mockClient);
 
-        it('returns proper error when bad blob path', function(done) {
+        it('returns proper error when bad blob path subdir', function(done) {
             tree.getBlob('ci/noop', function(error) {
                 assert.ok(error, "Nonexistant blob path should throw error");
                 expect(error).to.be.instanceOf(Error);
                 expect(error).to.have.property('message');
-                expect(error.message).to.equal('Blob path "noop" does not exist.');
+                expect(error.message).to.equal('Blob path "ci/noop" does not exist.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(404);
+                done();
+            });
+        });
+
+        it('returns proper error when bad blob path top dir', function(done) {
+            tree.getBlob('noop/ci', function(error) {
+                assert.ok(error, "Nonexistant blob path should throw error");
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Tree path "noop" does not exist.');
                 expect(error).to.have.property('code');
                 expect(error.code).to.equal(404);
                 done();
@@ -171,7 +214,7 @@ describe('tree object', function() {
                 assert.ok(error, "Calling getBlob() with path to tree should throw an error");
                 expect(error).to.be.instanceOf(TypeError);
                 expect(error).to.have.property('message');
-                expect(error.message).to.equal('Specified blob path "travis" is not a blob, it is a tree.');
+                expect(error.message).to.equal('Specified blob path "ci/travis" is not a blob, it is a tree.');
                 expect(error).to.have.property('code');
                 expect(error.code).to.equal(400);
                 done();

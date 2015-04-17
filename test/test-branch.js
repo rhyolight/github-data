@@ -103,7 +103,6 @@ describe('branch object', function() {
                     callback(null, mockCommit);
                 }
                 , getTree: function(params, callback) {
-                    console.log(params);
                     if (params.sha == 'fbb4439a956a45fa7a5ea52f44f8a095502e3c6b') {
                         callback(null, mockTree);
                     } else if (params.sha == '431de928076fd464812364c158dd8cb8347d5710') {
@@ -133,7 +132,7 @@ describe('branch object', function() {
                 assert.ok(error, "Calling getFile() with bad path should throw an error");
                 expect(error).to.be.instanceOf(Error);
                 expect(error).to.have.property('message');
-                expect(error.message).to.equal('Blob path "noop" does not exist.');
+                expect(error.message).to.equal('Blob path "ci/noop" does not exist.');
                 expect(error).to.have.property('code');
                 expect(error.code).to.equal(404);
                 done();
