@@ -52,6 +52,11 @@ describe('tree object', function() {
             assert.ok(tree.isBlob('README.md'));
         });
 
+        it('knows that bad paths are neither trees nor blobs', function() {
+            assert.notOk(tree.isTree('noop'));
+            assert.notOk(tree.isBlob('noop'));
+        });
+
     });
 
     describe('when getting subtree', function() {
