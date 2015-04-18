@@ -41,10 +41,18 @@ describe('blob object', function() {
 
     describe('after creation', function() {
 
+        var blob = new Blob(mockBlob, null, mockClient);
+
         it('allows retreival of utf-8 content', function() {
             var expectedContent = fs.readFileSync('./test/mock-data/README.md', 'utf-8')
               , content = blob.getContents();
             expect(content).to.equal(expectedContent);
+        });
+
+        it('reports whether contents have been changed', function() {
+            assert.notOk(blob.hasChangedContents());
+            blob.setContents('something different');
+            assert.ok(blob.hasChangedContents());
         });
 
     });

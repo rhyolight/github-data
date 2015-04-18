@@ -5,6 +5,7 @@ var assert = require('chai').assert
   , mockTree = require('./mock-data/tree')
   , mockCiTree = require('./mock-data/ci-tree')
   , mockBlob = require('./mock-data/blob')
+  , mockNewBlob = require('./mock-data/new-blob')
   ;
 
 describe('tree object', function() {
@@ -154,6 +155,9 @@ describe('tree object', function() {
                         expect(params.sha).to.equal('30f21dd6e547530a30543f0c40089f102b8afe0d');
                         callback(null, mockBlob);
                     }
+                  , createBlob: function(params, callback) {
+                        callback(null, mockNewBlob);
+                    }
                 }
             }
           , mockParent = {};
@@ -204,6 +208,50 @@ describe('tree object', function() {
                 done();
             });
         });
+
+    });
+
+    describe('when updating a blog', function() {
+
+        var mockBlob = new Blob({
+            sha: 'mock blob sha'
+            , content: 'Zm9vIGJhcg==' // base64 for "foo bar"
+        }, 'parent', {
+            gitdata: {
+                createBlob: function(params, callback) {
+                    callback(null, {
+                        url: "updated blob url"
+                        , sha: "updated blob sha"
+                    });
+                }
+            }
+        });
+        mockBlob.setContents("bar foo"); // So it doesn't throw an error when updating.
+
+        it('creates a new Blob object with the blob data result and sets itself as parent', function(done) {
+            tree.createBlob(mockBlob, function(error, newBlob) {
+                assert.notOk(error);
+                expect(newBlob).to.be.instanceOf(Blob);
+                expect(newBlob.parent).to.equal(tree);
+                expect(newBlob.contents).to.equal('bar foo');
+                expect(newBlob.sha).to.equal('updated blob sha');
+                done()
+            });
+        });
+
+        it('throws appropriate error when updating blob with unchanged content', function(done) {
+            mockBlob.setContents("foo bar");
+            tree.createBlob(mockBlob, function(error) {
+                assert.ok(error, "Calling createBlob() with an unchanged blob should throw an error");
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Blob contents have not changed.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(400);
+                done();
+            });
+        });
+
 
     });
 
