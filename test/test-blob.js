@@ -4,6 +4,7 @@ var fs = require('fs')
   , Blob = require('../lib/blob')
   , mockBlob = require('./mock-data/blob')
   , mockNewBlob = require('./mock-data/new-blob')
+  , blobUtf8Text = fs.readFileSync('./test/mock-data/README.md', 'utf-8')
   ;
 
 describe('blob object', function() {
@@ -44,7 +45,7 @@ describe('blob object', function() {
         var blob = new Blob(mockBlob, null, mockClient);
 
         it('allows retreival of utf-8 content', function() {
-            var expectedContent = fs.readFileSync('./test/mock-data/README.md', 'utf-8')
+            var expectedContent = blobUtf8Text
               , content = blob.getContents();
             expect(content).to.equal(expectedContent);
         });
@@ -53,6 +54,17 @@ describe('blob object', function() {
             assert.notOk(blob.hasChangedContents());
             blob.setContents('something different');
             assert.ok(blob.hasChangedContents());
+        });
+
+    });
+
+    describe('when represented as a string', function() {
+
+        it('lists contents in utf-8', function() {
+            expect(blob.toString()).to.equal(
+                'blob e0d794006138f680793d4cb6c431e3ba381d483d (162) contents:\n'
+                + blobUtf8Text
+            );
         });
 
     });
