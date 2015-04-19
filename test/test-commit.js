@@ -46,6 +46,21 @@ describe('commit object', function() {
 
     });
 
+    describe('when represented as a string', function() {
+
+        it('shows commit like git log shows it', function() {
+            expect(commit.toString()).to.equal(
+                'commit a075829d6b803ce74acf407b6d19e8434f1cf653\n' +
+                'Author: Matthew Taylor <matt@numenta.org>\n' +
+                'Date:   2015-04-16T19:46:09Z\n' +
+                '\n' +
+                '    nothing much\n'
+            );
+        });
+
+    });
+
+
     describe('when getting tree', function() {
 
         it('returns a Tree object', function(done) {
