@@ -10,6 +10,7 @@ var fs = require('fs')
   , mockCiTree = require('./mock-data/ci-tree')
   , mockBlob = require('./mock-data/blob')
   , mockNothingBlob = require('./mock-data/nothing-blob')
+  , lazyGetCommitTest = false
 ;
 
 describe('branch object', function() {
@@ -19,6 +20,9 @@ describe('branch object', function() {
       , repo: 'my-repository'
       , gitdata: {
             getCommit: function(params, callback) {
+                if (lazyGetCommitTest) {
+                    assert.fail('Commit should have already been fetched.');
+                }
                 expect(params.user).to.equal('my-organization');
                 expect(params.repo).to.equal('my-repository');
                 expect(params.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
@@ -56,13 +60,13 @@ describe('branch object', function() {
 
     });
 
-    describe('when getting commit', function() {
+    describe('when getting commit the first time', function() {
 
-        it('returns a Commit object', function(done) {
+        it('returns a Commit object', function (done) {
             expect(branch).to.have.property('getCommit');
             expect(branch.getCommit).to.be.instanceOf(Function);
 
-            branch.getCommit(function(err, commit) {
+            branch.getCommit(function (err, commit) {
                 assert.notOk(err);
                 expect(commit).to.be.instanceOf(Commit);
                 done();
@@ -70,6 +74,26 @@ describe('branch object', function() {
         });
 
     });
+
+    describe('when getting commit the second time', function() {
+        before(function() {
+            branch.commit = 'dummy commit';
+            lazyGetCommitTest = true;
+        });
+
+        it('lazily fetches the commit', function(done) {
+            branch.getCommit(function() {
+                done();
+            });
+        });
+
+        after(function() {
+            lazyGetCommitTest = false;
+            branch.commit = undefined;
+        });
+    });
+
+    branch = new Branch(mockRefMaster, mockClient);
 
     describe('when getting top-level files', function() {
 
