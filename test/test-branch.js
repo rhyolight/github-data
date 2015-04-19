@@ -45,6 +45,17 @@ describe('branch object', function() {
 
     });
 
+    describe('when represented as a string', function() {
+
+        it('shows ref and sha', function() {
+            expect(branch.toString()).to.equal(
+                'sha: a075829d6b803ce74acf407b6d19e8434f1cf653\n' +
+                'ref: refs/heads/master\n'
+            );
+        });
+
+    });
+
     describe('when getting commit', function() {
 
         it('returns a Commit object', function(done) {
