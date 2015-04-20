@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>lib/branch.js</title>
+    <title>lib/gitdata.js - GitHub Git Data API Client</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -14,10 +14,10 @@
 <div id="doc">
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
-                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+                <h1><img src="../assets/css/logo.png" title="GitHub Git Data API Client" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: </em>
+            <em>API Docs for: 0.0.1</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -38,9 +38,11 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Blob.html">Blob</a></li>
                                 <li><a href="../classes/Branch.html">Branch</a></li>
                                 <li><a href="../classes/Commit.html">Commit</a></li>
                                 <li><a href="../classes/GitData.html">GitData</a></li>
+                                <li><a href="../classes/Tree.html">Tree</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
@@ -77,73 +79,82 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: lib/branch.js</h1>
+<h1 class="file-heading">File: lib/gitdata.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
-var Commit = require(&#x27;./commit&#x27;)
-  , GitFile = require(&#x27;./gitfile&#x27;);
+var Branch = require(&#x27;./branch&#x27;)
+  , GitHubApi = require(&#x27;github&#x27;)
+  ;
 
 /**
- * Represents a git &quot;reference&quot;, but it makes more sense in the context of this
- * library to call it a branch. This constructor is not meant to be called
- * manually. It is created by the {{#crossLink &quot;GitData&quot;}}{{/crossLink}} object.
- * @class Branch
- * @param source {Object} JSON response from API, used to build.
- * @param githubClient {Object} GitHub API Client object.
+ * Interface to the GitHub Git Data API (https://developer.github.com/v3/git/).
+ * Builds on top of the excellent Node.js GitHub API client
+ * https://github.com/mikedeboer/node-github.
+ * @class GitData
+ * @param username {String} GitHub username.
+ * @param password {String} GitHub password.
+ * @param organization {String} GitHub organization.
+ * @param repository {String} GitHub repository.
  * @constructor
  */
-function Branch(source, githubClient) {
-    this.gh = githubClient;
-    this.ref = source.ref;
-    this.sha = source.object.sha;
-    this.commit = undefined;
+function GitData(username, password, organization, repository) {
+    if (! username) {
+        throw new Error(&#x27;Missing username.&#x27;);
+    }
+    if (! password) {
+        throw new Error(&#x27;Missing password.&#x27;);
+    }
+    if (! organization) {
+        throw new Error(&#x27;Missing organization.&#x27;);
+    }
+    if (! repository) {
+        throw new Error(&#x27;Missing repository.&#x27;);
+    }
+    this.username = username;
+    this.password = password;
+    this.organization = organization;
+    this.repository = repository;
+    this.gh = new GitHubApi({
+        version: &#x27;3.0.0&#x27;
+      , timeout: 5000
+    });
+    this.gh.authenticate({
+        type: &#x27;basic&#x27;
+      , username: this.username
+      , password: this.password
+    });
+    // Stash org and repo on GitHub Client object so it contains all the data it
+    // needs to make API calls no matter where it is.
+    this.gh.user = this.organization;
+    this.gh.repo = this.repository;
 }
 
 /**
- * Fetches the commit for this branch. 
- * @method getCommit
- * @param callback {Function} Called with (Error, {{#crossLink &quot;Commit&quot;}}{{/crossLink}})
+ * Fetches branch data and converts it into a
+ * {{#crossLink &quot;Branch&quot;}}{{/crossLink}}.
+ * @method getBranch
+ * @param name {String} Name of branch to fetch.
+ * @param callback {Function} Called with (Error, {{#crossLink &quot;Branch&quot;}}{{/crossLink}}).
  */
-Branch.prototype.getCommit = function(callback) {
+GitData.prototype.getBranch = function(name, callback) {
     var gh = this.gh;
-    if (this.commit) {
-        callback(null, this.commit);
-    } else {
-        gh.gitdata.getCommit({
-            user: gh.user
-          , repo: gh.repo
-          , sha: this.sha
-        }, function(err, response) {
-            var commit = new Commit(response, gh);
-            callback(null, commit);
-        });
-    }
-};
-
-Branch.prototype.getFile = function(path, callback) {
-    this.getCommit(function(error, commit) {
-        commit.getTree(function(error, tree) {
-            tree.getBlob(path, function(error, blob) {
-                if (error) {
-                    return callback(error);
-                }
-                callback(null, new GitFile(path, blob, tree, commit));
-            });
-        });
+    gh.gitdata.getReference({
+        user: gh.user
+      , repo: gh.repo
+      , ref: &#x27;heads/&#x27; + name
+    }, function(error, response) {
+        var returnError;
+        if (error) {
+            returnError = new Error(&#x27;Branch &quot;&#x27; + name + &#x27;&quot; does not exist.&#x27;);
+            returnError.code = error.code;
+            return callback(returnError);
+        }
+        callback(null, new Branch(response, gh));
     });
 };
 
-Branch.prototype.toString = function() {
-    var out = &#x27;sha: &#x27; + this.sha + &#x27;\n&#x27;
-            + &#x27;ref: &#x27; + this.ref + &#x27;\n&#x27;;
-    return out;
-};
-
-// This is so Node.js will use toString within console.log().
-Branch.prototype.inspect = Branch.prototype.toString;
-
-module.exports = Branch;
+module.exports = GitData;
     </pre>
 </div>
                     </div>

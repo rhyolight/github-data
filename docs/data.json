@@ -1,0 +1,406 @@
+{
+    "project": {
+        "name": "GitHub Git Data API Client",
+        "description": "Presents an object-oriented interface for dealing with git branches, commits, trees, and blobs. Uses the GitHub Git Data API.",
+        "version": "0.0.1",
+        "url": "http://github.com/rhyolight/github-data/"
+    },
+    "files": {
+        "lib/blob.js": {
+            "name": "lib/blob.js",
+            "modules": {},
+            "classes": {
+                "Blob": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib/branch.js": {
+            "name": "lib/branch.js",
+            "modules": {},
+            "classes": {
+                "Branch": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib/commit.js": {
+            "name": "lib/commit.js",
+            "modules": {},
+            "classes": {
+                "Commit": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib/gitdata.js": {
+            "name": "lib/gitdata.js",
+            "modules": {},
+            "classes": {
+                "GitData": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib/tree.js": {
+            "name": "lib/tree.js",
+            "modules": {},
+            "classes": {
+                "Tree": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "Blob": {
+            "name": "Blob",
+            "shortname": "Blob",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/blob.js",
+            "line": 1,
+            "description": "A git blob object.",
+            "params": [
+                {
+                    "name": "source",
+                    "description": "JSON response from API, used to build.",
+                    "type": "Object"
+                },
+                {
+                    "name": "parent",
+                    "description": "Expected to be {{#crossLink \"Tree\"}}{{/crossLink}}.",
+                    "type": "Object"
+                },
+                {
+                    "name": "githubClient",
+                    "description": "GitHub API Client object.",
+                    "type": "Object"
+                }
+            ],
+            "is_constructor": 1
+        },
+        "Branch": {
+            "name": "Branch",
+            "shortname": "Branch",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/branch.js",
+            "line": 4,
+            "description": "Represents a git \"reference\", but it makes more sense in the context of this\nlibrary to call it a branch. This constructor is not meant to be called\nmanually. It is created by the {{#crossLink \"GitData\"}}{{/crossLink}} object.",
+            "params": [
+                {
+                    "name": "source",
+                    "description": "JSON response from API, used to build.",
+                    "type": "Object"
+                },
+                {
+                    "name": "githubClient",
+                    "description": "GitHub API Client object.",
+                    "type": "Object"
+                }
+            ],
+            "is_constructor": 1
+        },
+        "Commit": {
+            "name": "Commit",
+            "shortname": "Commit",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/commit.js",
+            "line": 3,
+            "description": "A git commit object. Contains a tree.",
+            "params": [
+                {
+                    "name": "source",
+                    "description": "JSON response from API, used to build.",
+                    "type": "Object"
+                },
+                {
+                    "name": "githubClient",
+                    "description": "GitHub API Client object.",
+                    "type": "Object"
+                }
+            ],
+            "is_constructor": 1
+        },
+        "GitData": {
+            "name": "GitData",
+            "shortname": "GitData",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/gitdata.js",
+            "line": 5,
+            "description": "Interface to the GitHub Git Data API (https://developer.github.com/v3/git/).\nBuilds on top of the excellent Node.js GitHub API client\nhttps://github.com/mikedeboer/node-github.",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "GitHub username.",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "GitHub password.",
+                    "type": "String"
+                },
+                {
+                    "name": "organization",
+                    "description": "GitHub organization.",
+                    "type": "String"
+                },
+                {
+                    "name": "repository",
+                    "description": "GitHub repository.",
+                    "type": "String"
+                }
+            ],
+            "is_constructor": 1
+        },
+        "Tree": {
+            "name": "Tree",
+            "shortname": "Tree",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/tree.js",
+            "line": 4,
+            "description": "A git tree object.",
+            "params": [
+                {
+                    "name": "source",
+                    "description": "JSON response from API, used to build.",
+                    "type": "Object"
+                },
+                {
+                    "name": "parent",
+                    "description": "Expected to be {{#crossLink \"Tree\"}}{{/crossLink}} or\n                       {{#crossLink \"Commit\"}}{{/crossLink}}.",
+                    "type": "Object"
+                },
+                {
+                    "name": "githubClient",
+                    "description": "GitHub API Client object.",
+                    "type": "Object"
+                }
+            ],
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "lib/blob.js",
+            "line": 18,
+            "description": "Gets utf-8 contents of blob.",
+            "itemtype": "method",
+            "name": "getContents",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Blob"
+        },
+        {
+            "file": "lib/blob.js",
+            "line": 27,
+            "description": "Sets utf-8 contents of blob.",
+            "itemtype": "method",
+            "name": "setContents",
+            "params": [
+                {
+                    "name": "contents",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": "Blob"
+        },
+        {
+            "file": "lib/blob.js",
+            "line": 36,
+            "description": "Checks to see if this blob object is dirty and its contents are different\nfrom those returned from the GitHub Git Data API when it was originally\ncreated.",
+            "itemtype": "method",
+            "name": "hasContentsChanged",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Blob"
+        },
+        {
+            "file": "lib/blob.js",
+            "line": 51,
+            "description": "Posts a new blob object with this blob's current contents and returns the\nresponse data from the API. This function does not create a\n{{#crossLink \"Blob\"}}{{/crossLink}} object.",
+            "itemtype": "method",
+            "name": "update",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": ""
+                }
+            ],
+            "class": "Blob"
+        },
+        {
+            "file": "lib/branch.js",
+            "line": 20,
+            "description": "Fetches the commit for this branch.",
+            "itemtype": "method",
+            "name": "getCommit",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "Called with (Error, {{#crossLink \"Commit\"}}{{/crossLink}})",
+                    "type": "Function"
+                }
+            ],
+            "class": "Branch"
+        },
+        {
+            "file": "lib/commit.js",
+            "line": 20,
+            "description": "Fetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "Called with (Error, {{#crossLink \"Tree\"}}{{/crossLink}})",
+                    "type": "Function"
+                }
+            ],
+            "class": "Commit"
+        },
+        {
+            "file": "lib/gitdata.js",
+            "line": 48,
+            "description": "Fetches branch data and converts it into a\n{{#crossLink \"Branch\"}}{{/crossLink}}.",
+            "itemtype": "method",
+            "name": "getBranch",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of branch to fetch.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Called with (Error, {{#crossLink \"Branch\"}}{{/crossLink}}).",
+                    "type": "Function"
+                }
+            ],
+            "class": "GitData"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 27,
+            "description": "Checks if path points to a {{#crossLink \"Tree\"}}{{/crossLink}}.",
+            "itemtype": "method",
+            "name": "isTree",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Path to an object within the tree.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 41,
+            "description": "Checks if path points to a {{#crossLink \"Blob\"}}{{/crossLink}}.",
+            "itemtype": "method",
+            "name": "isBlob",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Path to an object within the tree.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 55,
+            "description": "Fetches a {{#crossLink \"Tree\"}}{{/crossLink}}, given a path.",
+            "itemtype": "method",
+            "name": "getTree",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Path to the tree.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Called with (Error, {{#crossLink \"Tree\"}}{{/crossLink}})",
+                    "type": "Function"
+                }
+            ],
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 86,
+            "description": "Fetches a {{#crossLink \"Blob\"}}{{/crossLink}}, given a path. This function\nwill traverse subtrees to get to the blob if necessary. If it does, the Blob\nobject passed back may not have this tree as its parent, but the subtree\nimmediately above it.",
+            "itemtype": "method",
+            "name": "getBlob",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Path to the blob.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Called with (Error, {{#crossLink \"Blob\"}}{{/crossLink}})",
+                    "type": "Function"
+                }
+            ],
+            "class": "Tree"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/blob.js:18"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/blob.js:36"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:27"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:41"
+        },
+        {
+            "message": "Missing item type\nFetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
+            "line": " lib/commit.js:20"
+        }
+    ]
+}

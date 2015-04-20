@@ -1,0 +1,9 @@
+{
+    "name": "GitHub Git Data API Client",
+    "description": "Presents an object-oriented interface for dealing with git branches, commits, trees, and blobs. Uses the GitHub Git Data API.",
+    "version": "0.0.1",
+    "url": "http://github.com/rhyolight/github-data/",
+    "options": {
+        "outdir": "docs"
+    }
+}
