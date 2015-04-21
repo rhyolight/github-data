@@ -1,4 +1,5 @@
-var assert = require('chai').assert
+var _ = require('lodash')
+  , assert = require('chai').assert
   , expect = require('chai').expect
   , Tree = require('../lib/tree')
   , Blob = require('../lib/blob')
@@ -44,6 +45,7 @@ describe('tree object', function() {
     });
 
     describe('when inspecting object types', function() {
+        var tree = new Tree(mockTree, mockParent, mockClient);
 
         it('knows a tree path', function() {
             assert.ok(tree.isTree('ci'));
@@ -56,6 +58,12 @@ describe('tree object', function() {
         it('knows that bad paths are neither trees nor blobs', function() {
             assert.notOk(tree.isTree('noop'));
             assert.notOk(tree.isBlob('noop'));
+        });
+
+        it('reports whether objects have been changed', function() {
+            expect(tree.hasChanged()).to.equal(false);
+            tree.objects[0].sha = 'updated-sha';
+            expect(tree.hasChanged()).to.equal(true);
         });
 
     });
