@@ -86,6 +86,14 @@
 var _ = require(&#x27;lodash&#x27;)
   , Blob = require(&#x27;./blob&#x27;);
 
+/*
+ * Is this path string a deep path or just one file or directory?
+ */
+function isDeep(path) {
+    return path.indexOf(&#x27;/&#x27;) &gt; -1;
+}
+
+
 /**
  * A git tree object.
  * @class Tree
@@ -100,13 +108,24 @@ function Tree(source, parent, githubClient) {
     this.sha = source.sha;
     this.parent = parent;
     this.truncated = source.truncated;
-    this.objects = source.tree;
+    this.objects = _.cloneDeep(source.tree);
+    this._source = source;
 }
 
 Tree.prototype._getObjectDataByPath = function(path) {
     return _.find(this.objects, function(object) {
         return object.path == path;
     });
+};
+
+/**
+ * Checks to see if this tree object is dirty, meaning the tree objects have
+ * been manually changed since being retrieved from the API.
+ * @method hasChanged
+ * @returns {boolean}
+ */
+Tree.prototype.hasChanged = function() {
+    return JSON.stringify(this._source.tree) != JSON.stringify(this.objects);
 };
 
 /**
@@ -138,6 +157,37 @@ Tree.prototype.isBlob = function(path) {
 };
 
 /**
+ * This function takes a path, assuming it contains more than one level, and
+ * gets the top level Tree object and calls an &quot;operation&quot; on it (probably
+ * either &#x27;getTree&#x27; or &#x27;getBlob&#x27;), calling the callback function with the
+ * result. This is useful for navigating down tree chains.
+ * @param path {String} Complex path (more than just one directory or file)
+ * @param operation {String} Name of function to call on resulting Tree
+ * @param callback {Function} Called with result of operation (Error, Object)
+ * @private
+ */
+Tree.prototype._callOnNextTree = function(path, operation, callback) {
+    var pathParts = path.split(&#x27;/&#x27;)
+      , topDir = pathParts.shift()
+      , remainingPath = pathParts.join(&#x27;/&#x27;)
+      ;
+
+    this.getTree(topDir, function(error, topTree) {
+        if (error) {
+            return callback(error);
+        }
+        topTree[operation](remainingPath, function(error, result) {
+            if (error) {
+                error.message = error.message.replace(remainingPath, path);
+                return callback(error);
+            }
+            callback(null, result);
+        });
+    });
+
+};
+
+/**
  * Fetches a {{#crossLink &quot;Tree&quot;}}{{/crossLink}}, given a path.
  * @method getTree
  * @param path {String} Path to the tree.
@@ -147,24 +197,31 @@ Tree.prototype.getTree = function(path, callback) {
     var me = this
       , gh = this.gh
       , returnError
-      , targetObject = this._getObjectDataByPath(path);
-    if (! targetObject) {
-        returnError = new Error(&#x27;Tree path &quot;&#x27; + path + &#x27;&quot; does not exist.&#x27;);
-        returnError.code = 404;
-        callback(returnError);
-    } else if (targetObject.type !== &quot;tree&quot;) {
-        returnError = new TypeError(&#x27;Specified tree path &quot;&#x27; + path
-            + &#x27;&quot; is not a tree, it is a &#x27; + targetObject.type + &#x27;.&#x27;);
-        returnError.code = 400;
-        callback(returnError);
+      , targetObject
+      ;
+
+    if (isDeep(path)) {
+        this._callOnNextTree(path, &#x27;getTree&#x27;, callback);
     } else {
-        gh.gitdata.getTree({
-            user: gh.user
-            , repo: gh.repo
-            , sha: targetObject.sha
-        }, function(err, response) {
-            callback(null, new Tree(response, me, gh))
-        });
+        targetObject = this._getObjectDataByPath(path);
+        if (! targetObject) {
+            returnError = new Error(&#x27;Tree path &quot;&#x27; + path + &#x27;&quot; does not exist.&#x27;);
+            returnError.code = 404;
+            callback(returnError);
+        } else if (targetObject.type !== &quot;tree&quot;) {
+            returnError = new TypeError(&#x27;Specified tree path &quot;&#x27; + path
+                + &#x27;&quot; is not a tree, it is a &#x27; + targetObject.type + &#x27;.&#x27;);
+            returnError.code = 400;
+            callback(returnError);
+        } else {
+            gh.gitdata.getTree({
+                user: gh.user
+                , repo: gh.repo
+                , sha: targetObject.sha
+            }, function(err, response) {
+                callback(null, new Tree(response, me, gh))
+            });
+        }
     }
 };
 
@@ -182,28 +239,10 @@ Tree.prototype.getBlob = function(path, callback) {
       , gh = this.gh
       , returnError
       , targetObject
-      , pathParts
-      , topDir
-      , remainingPath
       ;
 
-    if (path.indexOf(&#x27;/&#x27;) &gt; -1) {
-        // Handle lower-level files.
-        pathParts = path.split(&#x27;/&#x27;);
-        topDir = pathParts.shift();
-        remainingPath = pathParts.join(&#x27;/&#x27;);
-        this.getTree(topDir, function(error, tree) {
-            if (error) {
-                return callback(error);
-            }
-            tree.getBlob(remainingPath, function(error, blob) {
-                if (error) {
-                    error.message = error.message.replace(remainingPath, path);
-                    return callback(error);
-                }
-                callback(null, blob);
-            });
-        });
+    if (isDeep(path)) {
+        this._callOnNextTree(path, &#x27;getBlob&#x27;, callback);
     } else {
         targetObject = this._getObjectDataByPath(path);
         if (! targetObject) {

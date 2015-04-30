@@ -178,7 +178,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "lib/tree.js",
-            "line": 4,
+            "line": 12,
             "description": "A git tree object.",
             "params": [
                 {
@@ -271,7 +271,7 @@
         },
         {
             "file": "lib/commit.js",
-            "line": 20,
+            "line": 21,
             "description": "Fetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
             "params": [
                 {
@@ -304,7 +304,19 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 27,
+            "line": 36,
+            "description": "Checks to see if this tree object is dirty, meaning the tree objects have\nbeen manually changed since being retrieved from the API.",
+            "itemtype": "method",
+            "name": "hasChanged",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 46,
             "description": "Checks if path points to a {{#crossLink \"Tree\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "isTree",
@@ -323,7 +335,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 41,
+            "line": 60,
             "description": "Checks if path points to a {{#crossLink \"Blob\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "isBlob",
@@ -342,7 +354,32 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 55,
+            "line": 74,
+            "description": "This function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Complex path (more than just one directory or file)",
+                    "type": "String"
+                },
+                {
+                    "name": "operation",
+                    "description": "Name of function to call on resulting Tree",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Called with result of operation (Error, Object)",
+                    "type": "Function"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 105,
             "description": "Fetches a {{#crossLink \"Tree\"}}{{/crossLink}}, given a path.",
             "itemtype": "method",
             "name": "getTree",
@@ -362,7 +399,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 86,
+            "line": 143,
             "description": "Fetches a {{#crossLink \"Blob\"}}{{/crossLink}}, given a path. This function\nwill traverse subtrees to get to the blob if necessary. If it does, the Blob\nobject passed back may not have this tree as its parent, but the subtree\nimmediately above it.",
             "itemtype": "method",
             "name": "getBlob",
@@ -392,15 +429,23 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:27"
+            "line": " lib/tree.js:36"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:41"
+            "line": " lib/tree.js:46"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:60"
         },
         {
             "message": "Missing item type\nFetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
-            "line": " lib/commit.js:20"
+            "line": " lib/commit.js:21"
+        },
+        {
+            "message": "Missing item type\nThis function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",
+            "line": " lib/tree.js:74"
         }
     ]
 }

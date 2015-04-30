@@ -99,7 +99,8 @@ function Commit(source, githubClient) {
     this.author = source.author;
     this.committer = source.committer;
     this.message = source.message;
-    this.tree = source.tree;
+    this.treeSha = source.tree.sha;
+    this.tree = undefined;
 }
 
 /**
@@ -109,16 +110,40 @@ function Commit(source, githubClient) {
 Commit.prototype.getTree = function(callback) {
     var me = this
       , gh = this.gh;
-    gh.gitdata.getTree({
-        user: gh.user
-      , repo: gh.repo
-      , sha: this.tree.sha
-    }, function(err, response) {
-        callback(null, new Tree(response, me, gh))
-    });
+    if (this.tree) {
+        callback(null, this.tree);
+    } else {
+        gh.gitdata.getTree({
+            user: gh.user
+            , repo: gh.repo
+            , sha: this.treeSha
+        }, function(err, response) {
+            me.tree = new Tree(response, me, gh);
+            callback(null, me.tree)
+        });
+    }
 };
 
+Commit.prototype.commitBlob = function(blob, message, callback) {
+    // 1. Create new blob through api.
+    blob.update(function(err, blobData) {
+        var newBlobSha = blobData.sha;
 
+        callback();
+    });
+    // 2. Given the new blob sha, walk up the chain of parents of
+    //    old blob, which should be all trees up to a commit. For
+    //    each parent tree:
+    //     - create new tree with same tree objects except for the
+    //       updated child sha, which should point to the new child
+    //       object sha
+    //     - check to see if current parent&#x27;s parent is a tree
+    //        - if tree: repeat #2 sub-tasks
+    //        - if commit, proceed to #3
+    // 3. Create a new commit pointing to the topmost parent tree
+    //    in the parent chain.
+
+};
 
 Commit.prototype.toString = function() {
     var a = this.author
