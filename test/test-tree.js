@@ -5,7 +5,9 @@ var _ = require('lodash')
   , Blob = require('../lib/blob')
   , mockTree = require('./mock-data/tree')
   , mockCiTree = require('./mock-data/ci-tree')
+  , mockCiTravisTree = require('./mock-data/ci-travis-tree')
   , mockBlob = require('./mock-data/blob')
+  , mockNothingBlob = require('./mock-data/nothing-blob')
   , mockNewBlob = require('./mock-data/new-blob')
   ;
 
@@ -85,7 +87,7 @@ describe('tree object', function() {
 
     });
 
-    describe('when getting subtree', function() {
+    describe('when getting a first-level subtree', function() {
 
         it('returns proper error when bad tree path', function(done) {
             tree.getTree('noop', function(error) {
@@ -117,6 +119,71 @@ describe('tree object', function() {
                 expect(childTree).to.be.instanceOf(Tree);
                 expect(childTree.parent).to.equal(tree);
                 expect(childTree.sha).to.equal('431de928076fd464812364c158dd8cb8347d5710');
+                assert.notOk(childTree.truncated);
+                done();
+            });
+        });
+
+    });
+
+    describe('when getting a lower-level subtree', function() {
+
+        var mockClient = {
+                user: 'my-organization'
+              , repo: 'my-repository'
+              , gitdata: {
+                    getTree: function(params, callback) {
+                        expect(params.user).to.equal('my-organization');
+                        expect(params.repo).to.equal('my-repository');
+                        if (params.sha == '431de928076fd464812364c158dd8cb8347d5710') {
+                            callback(null, mockCiTree);
+                        } else if (params.sha == 'c1ee44939fdf1bff899d7ff0970932fc12926ec0') {
+                            callback(null, mockCiTravisTree)
+                        }
+                    }
+                  , getBlob: function(params, callback) {
+                        expect(params.user).to.equal('my-organization');
+                        expect(params.repo).to.equal('my-repository');
+                        expect(params.sha).to.equal('30f21dd6e547530a30543f0c40089f102b8afe0d');
+                        callback(null, mockNothingBlob);
+                    }
+                }
+            }
+          , mockParent = {}
+          ;
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
+
+        it('returns proper error when bad tree path', function(done) {
+            tree.getTree('ci/noop', function(error) {
+                assert.ok(error, "Nonexistant tree path should throw error");
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Tree path "ci/noop" does not exist.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(404);
+                done();
+            });
+        });
+
+        it('returns proper error when tree path points to blob', function(done) {
+            tree.getTree('ci/nothing.txt', function(error) {
+                assert.ok(error, "Calling getTree() with path to blob should throw an error");
+                expect(error).to.be.instanceOf(TypeError);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Specified tree path "ci/nothing.txt" is not a tree, it is a blob.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(400);
+                done();
+            });
+        });
+
+        it('returns a Tree object with a pointer to parent tree', function(done) {
+            tree.getTree('ci/travis', function(err, childTree) {
+                assert.notOk(err);
+                expect(childTree).to.be.instanceOf(Tree);
+                expect(childTree.parent.sha).to.equal('431de928076fd464812364c158dd8cb8347d5710');
+                expect(childTree.sha).to.equal('c1ee44939fdf1bff899d7ff0970932fc12926ec0');
                 assert.notOk(childTree.truncated);
                 done();
             });
