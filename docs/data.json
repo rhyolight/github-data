@@ -508,7 +508,22 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 233,
+            "line": 218,
+            "description": "Creates a new Tree object given the current state of this tree. Returns an\nerror if this tree's contents have not changed.",
+            "itemtype": "method",
+            "name": "update",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "Called with new Tree object (Error, Tree)",
+                    "type": "Function"
+                }
+            ],
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 246,
             "description": "Returns string representation of the Tree object, including all objects\nwithin the Tree.",
             "itemtype": "method",
             "name": "toString",
@@ -562,7 +577,7 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:233"
+            "line": " lib/tree.js:246"
         },
         {
             "message": "Missing item type\nThis function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",

@@ -6,6 +6,7 @@ var _ = require('lodash')
   , mockTree = require('./mock-data/tree')
   , mockCiTree = require('./mock-data/ci-tree')
   , mockCiTravisTree = require('./mock-data/ci-travis-tree')
+  , mockNewTree = require('./mock-data/new-tree')
   , mockBlob = require('./mock-data/blob')
   , mockNothingBlob = require('./mock-data/nothing-blob')
   , mockNewBlob = require('./mock-data/new-blob')
@@ -347,62 +348,49 @@ describe('tree object', function() {
 
     });
 
-    //describe('when updating itself', function() {
-    //
-    //    it('returns error if nothing has changed', function() {});
-    //
-    //    it('calls API with proper tree data for update', function() {});
-    //
-    //    it('returns new tree object with no parent on success', function() {});
-    //
-    //});
+    describe('when updating itself', function() {
 
-    /*
-     * I started updating a blob from the Tree object here, but I think it works
-     * better to do it all from the Commit, so I commented it out to continue
-     * from the Commit object.
-     */
+        var mockClient = {
+                user: 'my-organization'
+              , repo: 'my-repository'
+              , gitdata: {
+                  createTree: function(params, callback) {
+                      // Compare to original tree, but with updated README sha.
+                      var expectedTree = require('./mock-data/tree').tree;
+                      expectedTree[2].sha = 'dummy-new-sha';
 
-    //describe('when updating a blog', function() {
-    //    var mockBlobStash;
-    //
-    //    before(function() {
-    //        mockBlobStash = mockBlob;
-    //    });
-    //
-    //    // So it doesn't throw an error when updating.
-    //    mockBlob.setContents("bar foo");
-    //    // Tree will call blob.update(), so mock it out.
-    //    mockBlob.update = function() {};
-    //
-    //    it('', function(done) {
-    //        tree.updateBlob(mockBlob, function(error, newBlob) {
-    //            assert.notOk(error);
-    //            expect(newBlob).to.be.instanceOf(Blob);
-    //            expect(newBlob.parent).to.equal(tree);
-    //            expect(newBlob.contents).to.equal('bar foo');
-    //            expect(newBlob.sha).to.equal('updated blob sha');
-    //            done()
-    //        });
-    //    });
-    //
-    //    it('throws appropriate error when updating blob with unchanged content', function(done) {
-    //        mockBlob.setContents("foo bar");
-    //        tree.createBlob(mockBlob, function(error) {
-    //            assert.ok(error, "Calling createBlob() with an unchanged blob should throw an error");
-    //            expect(error).to.be.instanceOf(Error);
-    //            expect(error).to.have.property('message');
-    //            expect(error.message).to.equal('Blob contents have not changed.');
-    //            expect(error).to.have.property('code');
-    //            expect(error.code).to.equal(400);
-    //            done();
-    //        });
-    //    });
-    //
-    //    after(function() {
-    //        mockBlob = mockBlobStash;
-    //    });
-    //
-    //});
+                      expect(params.user).to.equal('my-organization');
+                      expect(params.repo).to.equal('my-repository');
+                      expect(params.tree).to.deep.equal(expectedTree);
+                      callback(null, mockNewTree);
+                  }
+                }
+            };
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
+
+        it('returns error if nothing has changed', function(done) {
+            tree.update(function(error) {
+                assert.ok(error);
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Tree objects have not changed.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(400);
+                done();
+            });
+        });
+
+        it('calls API with proper tree data for update and returns Tree object', function(done) {
+            tree.setBlob('README.md', 'dummy-new-sha');
+            tree.update(function(error, newTree) {
+                assert.notOk(error);
+                expect(newTree).to.be.instanceOf(Tree);
+                expect(newTree.getObjects()).to.be.deep.equal(mockNewTree.tree);
+                done()
+            });
+        });
+
+    });
 
 });
