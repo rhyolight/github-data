@@ -342,7 +342,38 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 36,
+            "line": 30,
+            "description": "Gets list of objects within the tree.",
+            "itemtype": "method",
+            "name": "getObjects",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 39,
+            "description": "Gets details about an object given its path.",
+            "itemtype": "method",
+            "name": "getObjectDataByPath",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "path to object",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 51,
             "description": "Checks to see if this tree object is dirty, meaning the tree objects have\nbeen manually changed since being retrieved from the API.",
             "itemtype": "method",
             "name": "hasChanged",
@@ -354,7 +385,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 46,
+            "line": 61,
             "description": "Checks if path points to a {{#crossLink \"Tree\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "isTree",
@@ -373,7 +404,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 60,
+            "line": 75,
             "description": "Checks if path points to a {{#crossLink \"Blob\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "isBlob",
@@ -392,7 +423,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 74,
+            "line": 89,
             "description": "This function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",
             "params": [
                 {
@@ -417,7 +448,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 105,
+            "line": 120,
             "description": "Fetches a {{#crossLink \"Tree\"}}{{/crossLink}}, given a path.",
             "itemtype": "method",
             "name": "getTree",
@@ -437,7 +468,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 143,
+            "line": 158,
             "description": "Fetches a {{#crossLink \"Blob\"}}{{/crossLink}}, given a path. This function\nwill traverse subtrees to get to the blob if necessary. If it does, the Blob\nobject passed back may not have this tree as its parent, but the subtree\nimmediately above it.",
             "itemtype": "method",
             "name": "getBlob",
@@ -458,6 +489,26 @@
         {
             "file": "lib/tree.js",
             "line": 200,
+            "description": "Updates own object listing with new SHA for given blob path.",
+            "itemtype": "method",
+            "name": "setBlob",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "path to blob",
+                    "type": "String"
+                },
+                {
+                    "name": "sha",
+                    "description": "SHA",
+                    "type": "String"
+                }
+            ],
+            "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 233,
             "description": "Returns string representation of the Tree object, including all objects\nwithin the Tree.",
             "itemtype": "method",
             "name": "toString",
@@ -491,23 +542,31 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:36"
+            "line": " lib/tree.js:30"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:46"
+            "line": " lib/tree.js:39"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:60"
+            "line": " lib/tree.js:51"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:200"
+            "line": " lib/tree.js:61"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:75"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:233"
         },
         {
             "message": "Missing item type\nThis function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",
-            "line": " lib/tree.js:74"
+            "line": " lib/tree.js:89"
         }
     ]
 }

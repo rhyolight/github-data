@@ -33,9 +33,9 @@ describe('tree object', function() {
         }
       , mockParent = {};
 
-    var tree = new Tree(mockTree, mockParent, mockClient);
-
     describe('when constructed', function() {
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
 
         it('makes essential properties accessible', function() {
             expect(tree.sha).to.equal('fbb4439a956a45fa7a5ea52f44f8a095502e3c6b');
@@ -43,10 +43,18 @@ describe('tree object', function() {
             assert.notOk(tree.truncated);
         });
 
+        it('exposes object listing', function() {
+            expect(tree.getObjects()).to.deep.equal(mockTree.tree);
+        });
+
+        it('can retrieve object data by path', function() {
+            expect(tree.getObjectDataByPath('README.md')).to.deep.equal(mockTree.tree[2]);
+        });
 
     });
 
     describe('when inspecting object types', function() {
+
         var tree = new Tree(mockTree, mockParent, mockClient);
 
         it('knows a tree path', function() {
@@ -72,6 +80,8 @@ describe('tree object', function() {
 
     describe('when represented as a string', function() {
 
+        var tree = new Tree(mockTree, mockParent, mockClient);
+
         it('lists tree object paths, types, and sizes', function() {
             expect(tree.toString()).to.equal(
                 'tree fbb4439a956a45fa7a5ea52f44f8a095502e3c6b:\n' +
@@ -88,6 +98,8 @@ describe('tree object', function() {
     });
 
     describe('when getting a first-level subtree', function() {
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
 
         it('returns proper error when bad tree path', function(done) {
             tree.getTree('noop', function(error) {
@@ -193,6 +205,8 @@ describe('tree object', function() {
 
 
     describe('when getting a first-level blob', function() {
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
 
         it('returns proper error when bad blob path', function(done) {
             tree.getBlob('noop', function(error) {
@@ -303,6 +317,46 @@ describe('tree object', function() {
 
     });
 
+    describe('when setting new blob data', function() {
+
+        var tree = new Tree(mockTree, mockParent, mockClient);
+
+        it('accepts correct path string and blob sha string', function() {
+            tree.setBlob('README.md', 'some-sha');
+            expect(tree.getObjectDataByPath('README.md').sha).to.equal('some-sha');
+            assert.ok(tree.hasChanged());
+        });
+
+        it('throws proper error when path does not exist', function() {
+            var tree = new Tree(mockTree, mockParent, mockClient);
+
+            expect(function() {
+                tree.setBlob('foobar', 'barfoo');
+            }).to.throw(Error, 'No object in tree for path "foobar".');
+            assert.notOk(tree.hasChanged());
+        });
+
+        it('throws proper error when path points to tree, not blob', function() {
+            var tree = new Tree(mockTree, mockParent, mockClient);
+
+            expect(function() {
+                tree.setBlob('ci', 'barfoo');
+            }).to.throw(Error, 'Specified blob path "ci" is a tree, not a blob.');
+            assert.notOk(tree.hasChanged());
+        });
+
+    });
+
+    //describe('when updating itself', function() {
+    //
+    //    it('returns error if nothing has changed', function() {});
+    //
+    //    it('calls API with proper tree data for update', function() {});
+    //
+    //    it('returns new tree object with no parent on success', function() {});
+    //
+    //});
+
     /*
      * I started updating a blob from the Tree object here, but I think it works
      * better to do it all from the Commit, so I commented it out to continue
@@ -310,25 +364,19 @@ describe('tree object', function() {
      */
 
     //describe('when updating a blog', function() {
+    //    var mockBlobStash;
     //
-    //    var mockBlob = new Blob({
-    //        sha: 'mock blob sha'
-    //      , content: 'Zm9vIGJhcg==' // base64 for "foo bar"
-    //    }, 'parent', {
-    //        gitdata: {
-    //            createBlob: function(params, callback) {
-    //                callback(null, {
-    //                    url: "updated blob url"
-    //                  , sha: "updated blob sha"
-    //                });
-    //            }
-    //        }
+    //    before(function() {
+    //        mockBlobStash = mockBlob;
     //    });
+    //
     //    // So it doesn't throw an error when updating.
     //    mockBlob.setContents("bar foo");
+    //    // Tree will call blob.update(), so mock it out.
+    //    mockBlob.update = function() {};
     //
-    //    it('creates a new Blob object with the blob data result and sets itself as parent', function(done) {
-    //        tree.createBlob(mockBlob, function(error, newBlob) {
+    //    it('', function(done) {
+    //        tree.updateBlob(mockBlob, function(error, newBlob) {
     //            assert.notOk(error);
     //            expect(newBlob).to.be.instanceOf(Blob);
     //            expect(newBlob.parent).to.equal(tree);
@@ -349,6 +397,10 @@ describe('tree object', function() {
     //            expect(error.code).to.equal(400);
     //            done();
     //        });
+    //    });
+    //
+    //    after(function() {
+    //        mockBlob = mockBlobStash;
     //    });
     //
     //});

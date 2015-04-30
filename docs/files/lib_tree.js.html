@@ -112,7 +112,22 @@ function Tree(source, parent, githubClient) {
     this._source = source;
 }
 
-Tree.prototype._getObjectDataByPath = function(path) {
+/**
+ * Gets list of objects within the tree.
+ * @method getObjects
+ * @returns {Array}
+ */
+Tree.prototype.getObjects = function() {
+    return this.objects;
+};
+
+/**
+ * Gets details about an object given its path.
+ * @method getObjectDataByPath
+ * @param path {String} path to object
+ * @returns {Object}
+ */
+Tree.prototype.getObjectDataByPath = function(path) {
     return _.find(this.objects, function(object) {
         return object.path == path;
     });
@@ -135,7 +150,7 @@ Tree.prototype.hasChanged = function() {
  * @returns {boolean}
  */
 Tree.prototype.isTree = function(path) {
-    var object = this._getObjectDataByPath(path);
+    var object = this.getObjectDataByPath(path);
     if (! object) {
         return false;
     }
@@ -149,7 +164,7 @@ Tree.prototype.isTree = function(path) {
  * @returns {boolean}
  */
 Tree.prototype.isBlob = function(path) {
-    var object = this._getObjectDataByPath(path);
+    var object = this.getObjectDataByPath(path);
     if (! object) {
         return false;
     }
@@ -203,7 +218,7 @@ Tree.prototype.getTree = function(path, callback) {
     if (isDeep(path)) {
         this._callOnNextTree(path, &#x27;getTree&#x27;, callback);
     } else {
-        targetObject = this._getObjectDataByPath(path);
+        targetObject = this.getObjectDataByPath(path);
         if (! targetObject) {
             returnError = new Error(&#x27;Tree path &quot;&#x27; + path + &#x27;&quot; does not exist.&#x27;);
             returnError.code = 404;
@@ -244,7 +259,7 @@ Tree.prototype.getBlob = function(path, callback) {
     if (isDeep(path)) {
         this._callOnNextTree(path, &#x27;getBlob&#x27;, callback);
     } else {
-        targetObject = this._getObjectDataByPath(path);
+        targetObject = this.getObjectDataByPath(path);
         if (! targetObject) {
             returnError = new Error(&#x27;Blob path &quot;&#x27; + path + &#x27;&quot; does not exist.&#x27;);
             returnError.code = 404;
@@ -265,6 +280,24 @@ Tree.prototype.getBlob = function(path, callback) {
         });
     }
 
+};
+
+/**
+ * Updates own object listing with new SHA for given blob path.
+ * @method setBlob
+ * @param path {String} path to blob
+ * @param sha {String} SHA
+ */
+Tree.prototype.setBlob = function(path, sha) {
+    var object = this.getObjectDataByPath(path);
+    if (! object) {
+        throw new Error(&#x27;No object in tree for path &quot;&#x27; + path + &#x27;&quot;.&#x27;);
+    }
+    if (! this.isBlob(path)) {
+        throw new Error(&#x27;Specified blob path &quot;&#x27; + path
+            + &#x27;&quot; is a tree, not a blob.&#x27;);
+    }
+    object.sha = sha;
 };
 
 //Tree.prototype.createBlob = function(currentBlob, callback) {
