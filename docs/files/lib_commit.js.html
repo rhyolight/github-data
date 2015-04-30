@@ -105,6 +105,7 @@ function Commit(source, githubClient) {
 
 /**
  * Fetches the {{#crossLink &quot;Tree&quot;}}{{/crossLink}} corresponding to this commit.
+ * @method getTree
  * @param callback {Function} Called with (Error, {{#crossLink &quot;Tree&quot;}}{{/crossLink}})
  */
 Commit.prototype.getTree = function(callback) {
@@ -145,6 +146,11 @@ Commit.prototype.commitBlob = function(blob, message, callback) {
 
 };
 
+/**
+ * Returns string data about this commit, similar to what git log would show.
+ * @method toString
+ * @returns {string}
+ */
 Commit.prototype.toString = function() {
     var a = this.author
       , c = this.committer

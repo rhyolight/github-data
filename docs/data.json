@@ -255,6 +255,18 @@
             "class": "Blob"
         },
         {
+            "file": "lib/blob.js",
+            "line": 78,
+            "description": "Returns a string detailing this Blob object, including sha, size, and\ncontents.",
+            "itemtype": "method",
+            "name": "toString",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Blob"
+        },
+        {
             "file": "lib/branch.js",
             "line": 20,
             "description": "Fetches the commit for this branch.",
@@ -270,9 +282,23 @@
             "class": "Branch"
         },
         {
+            "file": "lib/branch.js",
+            "line": 54,
+            "description": "Returns string description of this branch reference, including sha and ref.",
+            "itemtype": "method",
+            "name": "toString",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Branch"
+        },
+        {
             "file": "lib/commit.js",
             "line": 21,
             "description": "Fetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
+            "itemtype": "method",
+            "name": "getTree",
             "params": [
                 {
                     "name": "callback",
@@ -280,6 +306,18 @@
                     "type": "Function"
                 }
             ],
+            "class": "Commit"
+        },
+        {
+            "file": "lib/commit.js",
+            "line": 64,
+            "description": "Returns string data about this commit, similar to what git log would show.",
+            "itemtype": "method",
+            "name": "toString",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
             "class": "Commit"
         },
         {
@@ -416,6 +454,18 @@
                 }
             ],
             "class": "Tree"
+        },
+        {
+            "file": "lib/tree.js",
+            "line": 200,
+            "description": "Returns string representation of the Tree object, including all objects\nwithin the Tree.",
+            "itemtype": "method",
+            "name": "toString",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Tree"
         }
     ],
     "warnings": [
@@ -426,6 +476,18 @@
         {
             "message": "replacing incorrect tag: returns with return",
             "line": " lib/blob.js:36"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/blob.js:78"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/branch.js:54"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/commit.js:64"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -440,8 +502,8 @@
             "line": " lib/tree.js:60"
         },
         {
-            "message": "Missing item type\nFetches the {{#crossLink \"Tree\"}}{{/crossLink}} corresponding to this commit.",
-            "line": " lib/commit.js:21"
+            "message": "replacing incorrect tag: returns with return",
+            "line": " lib/tree.js:200"
         },
         {
             "message": "Missing item type\nThis function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",

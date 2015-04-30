@@ -160,6 +160,12 @@ Blob.prototype.update = function(callback) {
     }
 };
 
+/**
+ * Returns a string detailing this Blob object, including sha, size, and
+ * contents.
+ * @method toString
+ * @returns {string}
+ */
 Blob.prototype.toString = function() {
     return &#x27;blob &#x27; + this.sha
         + &#x27; (&#x27; + this.size + &#x27;) contents:\n&#x27;

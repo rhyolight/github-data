@@ -136,6 +136,11 @@ Branch.prototype.getFile = function(path, callback) {
     });
 };
 
+/**
+ * Returns string description of this branch reference, including sha and ref.
+ * @method toString
+ * @returns {string}
+ */
 Branch.prototype.toString = function() {
     var out = &#x27;sha: &#x27; + this.sha + &#x27;\n&#x27;
             + &#x27;ref: &#x27; + this.ref + &#x27;\n&#x27;;

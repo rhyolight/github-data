@@ -282,6 +282,12 @@ Tree.prototype.getBlob = function(path, callback) {
 //    });
 //};
 
+/**
+ * Returns string representation of the Tree object, including all objects
+ * within the Tree.
+ * @method toString
+ * @returns {string}
+ */
 Tree.prototype.toString = function() {
     var out = &#x27;tree &#x27; + this.sha + &#x27;:\n&#x27;;
     _.each(this.objects, function(object) {
