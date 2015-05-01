@@ -189,6 +189,10 @@ manually. It is created by the <a href="../classes/GitData.html" class="crosslin
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_push">push</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_toString">toString</a>
 
                             </li>
@@ -256,6 +260,75 @@ manually. It is created by the <a href="../classes/GitData.html" class="crosslin
 
 
 </div>
+<div id="method_push" class="method item">
+    <h3 class="name"><code>push</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>commit</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/lib_branch.js.html#l41"><code>lib&#x2F;branch.js:41</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Pushes a commit to this branch. Actually, it updates the reference object
+this branch represents to point to the commit SHA of the given commit. Once
+it successfully calls the API to do so, it updates its own SHA to point to
+the new commit SHA.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">commit</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
 <div id="method_toString" class="method item">
     <h3 class="name"><code>toString</code></h3>
 
@@ -274,7 +347,7 @@ manually. It is created by the <a href="../classes/GitData.html" class="crosslin
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/lib_branch.js.html#l54"><code>lib&#x2F;branch.js:54</code></a>
+        <a href="../files/lib_branch.js.html#l82"><code>lib&#x2F;branch.js:82</code></a>
         </p>
 
 

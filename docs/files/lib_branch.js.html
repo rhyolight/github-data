@@ -123,6 +123,34 @@ Branch.prototype.getCommit = function(callback) {
     }
 };
 
+/**
+ * Pushes a commit to this branch. Actually, it updates the reference object
+ * this branch represents to point to the commit SHA of the given commit. Once
+ * it successfully calls the API to do so, it updates its own SHA to point to
+ * the new commit SHA.
+ * @method push
+ * @param commit
+ * @param callback
+ */
+Branch.prototype.push = function(commit, callback) {
+    var me = this
+        // The ref is something like &quot;refs/heads/branchname&quot; but we don&#x27;t want
+        // the &quot;refs&quot; part so we get rid of it here.
+      , ref = this.ref.split(&#x27;/&#x27;).slice(1).join(&#x27;/&#x27;);
+    me.gh.gitdata.updateReference({
+        user: me.gh.user
+      , repo: me.gh.repo
+      , ref: ref
+      , sha: commit.sha
+    }, function(error, referenceData) {
+        me.sha = referenceData.object.sha;
+        callback(error);
+    });
+};
+
+/*
+ * Work in Progress
+ */
 Branch.prototype.getFile = function(path, callback) {
     this.getCommit(function(error, commit) {
         commit.getTree(function(error, tree) {

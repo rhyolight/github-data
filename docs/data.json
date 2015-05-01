@@ -283,7 +283,25 @@
         },
         {
             "file": "lib/branch.js",
-            "line": 54,
+            "line": 41,
+            "description": "Pushes a commit to this branch. Actually, it updates the reference object\nthis branch represents to point to the commit SHA of the given commit. Once\nit successfully calls the API to do so, it updates its own SHA to point to\nthe new commit SHA.",
+            "itemtype": "method",
+            "name": "push",
+            "params": [
+                {
+                    "name": "commit",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": ""
+                }
+            ],
+            "class": "Branch"
+        },
+        {
+            "file": "lib/branch.js",
+            "line": 82,
             "description": "Returns string description of this branch reference, including sha and ref.",
             "itemtype": "method",
             "name": "toString",
@@ -335,7 +353,7 @@
         },
         {
             "file": "lib/commit.js",
-            "line": 85,
+            "line": 91,
             "description": "Returns string data about this commit, similar to what git log would show.",
             "itemtype": "method",
             "name": "toString",
@@ -574,11 +592,11 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/branch.js:54"
+            "line": " lib/branch.js:82"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/commit.js:85"
+            "line": " lib/commit.js:91"
         },
         {
             "message": "replacing incorrect tag: returns with return",

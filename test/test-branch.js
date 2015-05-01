@@ -10,6 +10,7 @@ var fs = require('fs')
   , mockCiTree = require('./mock-data/ci-tree')
   , mockBlob = require('./mock-data/blob')
   , mockNothingBlob = require('./mock-data/nothing-blob')
+  , mockUpdatedRef = require('./mock-data/updated-ref')
   , lazyGetCommitTest = false
 ;
 
@@ -93,9 +94,41 @@ describe('branch object', function() {
         });
     });
 
-    branch = new Branch(mockRefMaster, mockClient);
+    describe('when pushing a commit', function() {
+        var mockClient = {
+                user: 'my-organization'
+              , repo: 'my-repository'
+              , gitdata: {
+                    updateReference: function(params, callback) {
+                        expect(params.user).to.equal('my-organization');
+                        expect(params.repo).to.equal('my-repository');
+                        expect(params.ref).to.equal('heads/master');
+                        expect(params.sha).to.equal('new-commit-sha');
+                        assert.notOk(params.force);
+                        callback(null, mockUpdatedRef);
+                    }
+                }
+            }
+          , mockNewCommit = {
+                sha: 'new-commit-sha'
+            }
+          , branch = new Branch(mockRefMaster, mockClient);
+
+        it('updates a reference through the API', function(done) {
+            expect(branch.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
+
+            branch.push(mockNewCommit, function(error) {
+                assert.notOk(error);
+                expect(branch.sha).to.equal('new-commit-sha');
+                done();
+            });
+        });
+
+    });
+
 
     describe('when getting top-level files', function() {
+        var branch = new Branch(mockRefMaster, mockClient);
 
         it('can get a File object with a valid path', function(done) {
             branch.getFile('README.md', function(error, file) {
