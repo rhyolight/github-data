@@ -133,6 +133,30 @@ describe('commit object', function() {
             });
         });
 
+        it('throws proper error when commit message is empty string', function(done) {
+            commit.commitTree(mockTreeToCommit, '', function(error) {
+                assert.ok(error);
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Commit must have a message.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(400);
+                done();
+            });
+        });
+
+        it('throws proper error when commit message is undefined', function(done) {
+            commit.commitTree(mockTreeToCommit, undefined, function(error) {
+                assert.ok(error);
+                expect(error).to.be.instanceOf(Error);
+                expect(error).to.have.property('message');
+                expect(error.message).to.equal('Commit must have a message.');
+                expect(error).to.have.property('code');
+                expect(error.code).to.equal(400);
+                done();
+            });
+        });
+
     });
 
     //describe('when committing a changed blob', function() {
