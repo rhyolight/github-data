@@ -310,7 +310,32 @@
         },
         {
             "file": "lib/commit.js",
-            "line": 64,
+            "line": 43,
+            "description": "Creates a new Commit given a Tree object.",
+            "itemtype": "method",
+            "name": "commitTree",
+            "params": [
+                {
+                    "name": "tree",
+                    "description": "Tree that contains changes to commit.",
+                    "type": "Tree"
+                },
+                {
+                    "name": "message",
+                    "description": "Commit message.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Called with new commit (Error, Commit).",
+                    "type": "Function"
+                }
+            ],
+            "class": "Commit"
+        },
+        {
+            "file": "lib/commit.js",
+            "line": 85,
             "description": "Returns string data about this commit, similar to what git log would show.",
             "itemtype": "method",
             "name": "toString",
@@ -523,7 +548,7 @@
         },
         {
             "file": "lib/tree.js",
-            "line": 246,
+            "line": 243,
             "description": "Returns string representation of the Tree object, including all objects\nwithin the Tree.",
             "itemtype": "method",
             "name": "toString",
@@ -553,7 +578,7 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/commit.js:64"
+            "line": " lib/commit.js:85"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -577,7 +602,7 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " lib/tree.js:246"
+            "line": " lib/tree.js:243"
         },
         {
             "message": "Missing item type\nThis function takes a path, assuming it contains more than one level, and\ngets the top level Tree object and calls an \"operation\" on it (probably\neither 'getTree' or 'getBlob'), calling the callback function with the\nresult. This is useful for navigating down tree chains.",

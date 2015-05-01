@@ -320,10 +320,7 @@ Tree.prototype.update = function(callback) {
       , tree: this.objects
       , base_tree: this.sha
     }, function(error, treeData) {
-        if (error) {
-            return callback(error);
-        }
-        callback(null, new Tree(treeData, null, gh))
+        callback(error, new Tree(treeData, null, gh))
     });
 };
 

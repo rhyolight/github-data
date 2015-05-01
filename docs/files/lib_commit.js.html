@@ -116,8 +116,8 @@ Commit.prototype.getTree = function(callback) {
     } else {
         gh.gitdata.getTree({
             user: gh.user
-            , repo: gh.repo
-            , sha: this.treeSha
+          , repo: gh.repo
+          , sha: this.treeSha
         }, function(err, response) {
             me.tree = new Tree(response, me, gh);
             callback(null, me.tree)
@@ -125,26 +125,47 @@ Commit.prototype.getTree = function(callback) {
     }
 };
 
-Commit.prototype.commitBlob = function(blob, message, callback) {
-    // 1. Create new blob through api.
-    blob.update(function(err, blobData) {
-        var newBlobSha = blobData.sha;
-
-        callback();
+/**
+ * Creates a new Commit given a Tree object.
+ * @method commitTree
+ * @param tree {Tree} Tree that contains changes to commit.
+ * @param message {String} Commit message.
+ * @param callback {Function} Called with new commit (Error, Commit).
+ */
+Commit.prototype.commitTree = function(tree, message, callback) {
+    var gh = this.gh;
+    gh.gitdata.createCommit({
+        user: gh.user
+      , repo: gh.repo
+      , message: message
+      , parents: [this.sha]
+      , tree: tree.sha
+    }, function(error, commitData) {
+        var treeCommit = new Commit(commitData, gh);
+        callback(null, treeCommit);
     });
-    // 2. Given the new blob sha, walk up the chain of parents of
-    //    old blob, which should be all trees up to a commit. For
-    //    each parent tree:
-    //     - create new tree with same tree objects except for the
-    //       updated child sha, which should point to the new child
-    //       object sha
-    //     - check to see if current parent&#x27;s parent is a tree
-    //        - if tree: repeat #2 sub-tasks
-    //        - if commit, proceed to #3
-    // 3. Create a new commit pointing to the topmost parent tree
-    //    in the parent chain.
-
 };
+
+//Commit.prototype.commitBlob = function(blob, message, callback) {
+//    // 1. Create new blob through api.
+//    blob.update(function(err, blobData) {
+//        var newBlobSha = blobData.sha;
+//
+//        callback();
+//    });
+//    // 2. Given the new blob sha, walk up the chain of parents of
+//    //    old blob, which should be all trees up to a commit. For
+//    //    each parent tree:
+//    //     - create new tree with same tree objects except for the
+//    //       updated child sha, which should point to the new child
+//    //       object sha
+//    //     - check to see if current parent&#x27;s parent is a tree
+//    //        - if tree: repeat #2 sub-tasks
+//    //        - if commit, proceed to #3
+//    // 3. Create a new commit pointing to the topmost parent tree
+//    //    in the parent chain.
+//
+//};
 
 /**
  * Returns string data about this commit, similar to what git log would show.

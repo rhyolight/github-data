@@ -4,6 +4,7 @@ var assert = require('chai').assert
   , Tree = require('../lib/tree')
   , Blob = require('../lib/blob')
   , mockCommit = require('./mock-data/commit')
+  , mockNewTreeCommit = require('./mock-data/new-tree-commit')
   , mockTree = require('./mock-data/tree')
   , mockNewBlob = require('./mock-data/new-blob')
   , lazyGetTreeTest = false
@@ -101,49 +102,82 @@ describe('commit object', function() {
 
     });
 
-    describe('when committing a changed blob', function() {
-        var mockParentTree = {
-                sha: 'parent-tree-sha'
-              , objects: {
-                    path: 'mock-blob-path'
-                  , mode: '100644'
-                  , type: 'blob'
-                  , sha: 'old-blob-sha'
+    describe('when committing a changed tree', function() {
+        var mockTreeToCommit = {
+                sha: 'mock-tree-sha'
+            }
+          , mockClient = {
+                user: 'my-organization'
+              , repo: 'my-repository'
+              , gitdata: {
+                    createCommit: function(params, callback) {
+                        expect(params.user).to.equal('my-organization');
+                        expect(params.repo).to.equal('my-repository');
+                        expect(params.message).to.equal('commit message');
+                        expect(params.parents).to.deep.equal(['a075829d6b803ce74acf407b6d19e8434f1cf653']);
+                        expect(params.tree).to.deep.equal('mock-tree-sha');
+                        callback(null, mockNewTreeCommit);
+                    }
                 }
             }
-          , blob = new Blob(
-                {
-                    content: 'cmF3IGNvbnRlbnQ='
-                  , sha: 'old-blob-sha'
-                }
-              , mockParentTree
-              , mockClient
-            );
-        blob.setContents('new stuff');
+          ;
 
-        describe('in the root directory', function() {
+        var commit = new Commit(mockCommit, mockClient);
 
-            it('calls the API to create a new blob with the blob contents', function(done) {
-                commit.commitBlob(blob, 'commit msg', function(err, newCommit, newBlob) {
-                    assert.ok(blobCreated);
-                    done();
-                });
+        it('calls the createCommit API properly', function(done) {
+            commit.commitTree(mockTreeToCommit, 'commit message', function(err, newCommit) {
+                assert.notOk(err);
+                expect(newCommit).to.be.instanceOf(Commit);
+                expect(newCommit.sha).to.equal('mock-new-commit-sha');
+                done();
             });
-
-            it('attaches the new tree as the parent of the new blob', function() {
-                // Mocking out the tree
-                commit.tree = {
-                    update: function() {}
-                };
-                // TODO: Continue testing here after implementing tree.update().
-            });
-
-        });
-
-        describe('in a subtree', function() {
         });
 
     });
+
+    //describe('when committing a changed blob', function() {
+    //    var mockParentTree = {
+    //            sha: 'parent-tree-sha'
+    //          , objects: {
+    //                path: 'mock-blob-path'
+    //              , mode: '100644'
+    //              , type: 'blob'
+    //              , sha: 'old-blob-sha'
+    //            }
+    //        }
+    //      , blob = new Blob(
+    //            {
+    //                content: 'cmF3IGNvbnRlbnQ='
+    //              , sha: 'old-blob-sha'
+    //            }
+    //          , mockParentTree
+    //          , mockClient
+    //        );
+    //    blob.setContents('new stuff');
+    //
+    //    describe('in the root directory', function() {
+    //
+    //        it('calls the API to create a new blob with the blob contents', function(done) {
+    //            commit.commitBlob(blob, 'commit msg', function(err, newCommit, newBlob) {
+    //                assert.ok(blobCreated);
+    //                done();
+    //            });
+    //        });
+    //
+    //        it('attaches the new tree as the parent of the new blob', function() {
+    //            // Mocking out the tree
+    //            commit.tree = {
+    //                update: function() {}
+    //            };
+    //            // TODO: Continue testing here after implementing tree.update().
+    //        });
+    //
+    //    });
+    //
+    //    describe('in a subtree', function() {
+    //    });
+    //
+    //});
 
 
 });
