@@ -135,7 +135,7 @@ describe('branch object', function() {
                 assert.notOk(error);
                 expect(file).to.be.instanceOf(GitFile);
                 expect(file.path).to.equal('README.md');
-                expect(file.contents).to.equal(fs.readFileSync('./test/mock-data/README.md', 'utf-8'));
+                expect(file.blob.getContents()).to.equal(fs.readFileSync('./test/mock-data/README.md', 'utf-8'));
                 done();
             });
         });
@@ -190,7 +190,7 @@ describe('branch object', function() {
                 assert.notOk(error);
                 expect(file).to.be.instanceOf(GitFile);
                 expect(file.path).to.equal('ci/nothing.txt');
-                expect(file.contents).to.equal(fs.readFileSync('./test/mock-data/nothing.txt', 'utf-8'));
+                expect(file.blob.getContents()).to.equal(fs.readFileSync('./test/mock-data/nothing.txt', 'utf-8'));
                 done();
             });
         });

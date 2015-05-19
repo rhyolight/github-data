@@ -42,7 +42,7 @@ gdata.getBranch('master', function(error, master) {
 gdata.getBranch('master', function(error, master) {
     master.getFile('path/to/file', function(error, file) {
         // Update something within the file.
-        file.contents = file.contents.replace('foo', 'bar');
+        file.blob.setContents(file.blob.getContents().replace('foo', 'bar'));
         // Commit the changes to the file.
         file.commit('Commit message', function(error, commit) {
             console.log('Created commit with SHA "%s"', commit.sha);
@@ -57,26 +57,26 @@ gdata.getBranch('master', function(error, master) {
  * Same file change, but putting the changes in a pull request against the
  * master branch.
  */
-
-gdata.getBranch('master', function(error, master) {
-    master.createBranch('feature-branch', function(error, featureBranch) {
-        featureBranch.getFile('path/to/file', function(error, file) {
-            // Update something within the file.
-            file.contents = fileObject.contents.replace('foo', 'bar');
-            // Commit the changes to the file.
-            file.commit('Commit message', function(error, commit) {
-                console.log('Created commit with SHA "%s"', commit.sha);
-                featureBranch.push(commit, function(error) {
-                    featureBranch.createPullRequest({
-                        title: 'PR title',
-                        body: 'optional',
-                        base: master
-                    }, function(error, pr) {
-                        console.log('Created PR #%s', pr.number);
-                    });
-                });
-            });
-        });
-    });
-});
+//
+//gdata.getBranch('master', function(error, master) {
+//    master.createBranch('feature-branch', function(error, featureBranch) {
+//        featureBranch.getFile('path/to/file', function(error, file) {
+//            // Update something within the file.
+//            file.contents = fileObject.contents.replace('foo', 'bar');
+//            // Commit the changes to the file.
+//            file.commit('Commit message', function(error, commit) {
+//                console.log('Created commit with SHA "%s"', commit.sha);
+//                featureBranch.push(commit, function(error) {
+//                    featureBranch.createPullRequest({
+//                        title: 'PR title',
+//                        body: 'optional',
+//                        base: master
+//                    }, function(error, pr) {
+//                        console.log('Created PR #%s', pr.number);
+//                    });
+//                });
+//            });
+//        });
+//    });
+//});
 
