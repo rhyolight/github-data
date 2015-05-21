@@ -1,82 +1,101 @@
-/*
- * This is just a brainstorm of what I want the API to look like. It doesn't
- * actually work.
- */
+var GitData = require('./index');
+var username = process.env['GH_USERNAME'];
+var authToken = process.env['GH_PASSWORD'];
 
-var gdata = new GitData('username', 'password', 'organization', 'repository');
+var gdata = new GitData(username, authToken, "numenta", "experiments");
 
-/**
- * Manually committing a file change.
- */
 
-gdata.getBranch('master', function(error, master) {
-    master.getCommit(function(error, commit) {
-        commit.getTree(function(error, tree) {
-            tree.getBlob(path, function(error, blob) {
-                blob.setContents('new contents');
-                //commit.commit(blob, 'Commit message.', function(err, commit) {
-                //
-                //});
+gdata.getBranch("master", function(err, master) {
+    console.log('branch: ' + master.ref);
 
-                // 1. Create new blob through api.
-                // 2. Given the new blob sha, walk up the chain of parents of
-                //    old blob, which should be all trees up to a commit. For
-                //    each parent tree:
-                //     - create new tree with same tree objects except for the
-                //       updated child sha, which should point to the new child
-                //       object sha
-                //     - check to see if current parent's parent is a tree
-                //        - if tree: repeat #2 sub-tasks
-                //        - if commit, proceed to #3
-                // 3. Create a new commit pointing to the topmost parent tree
-                //    in the parent chain.
+    /* The short way to do it: */
+    master.getFile('temp.txt', function(err, file) {
+        console.log(file);
+        file.blob.setContents(file.blob.getContents() + '\nUpdated on: ' + new Date());
+        file.commit('Updated through GitFile interface.', function(err, commit) {
+            // Still have to push the new commit.
+            master.push(commit, function(err) {
+                console.log('push done!');
+                master.getCommit(function(error, latestCommit) {
+                    console.log(latestCommit);
+                });
             });
         });
     });
-});
 
-/**
- * Changing a file by committing directly to the master branch.
- */
+    /**
+     * Same file change, but putting the changes in a pull request against the
+     * master branch.
+     */
 
-gdata.getBranch('master', function(error, master) {
-    master.getFile('path/to/file', function(error, file) {
-        // Update something within the file.
-        file.blob.setContents(file.blob.getContents().replace('foo', 'bar'));
-        // Commit the changes to the file.
-        file.commit('Commit message', function(error, commit) {
-            console.log('Created commit with SHA "%s"', commit.sha);
-            master.push(commit, function(error) {
-                console.log('Changes pushed.');
+    master.createBranch('feature-branch5', function(error, featureBranch) {
+        featureBranch.getFile('temp.txt', function(error, file) {
+            // Update something within the file.
+            file.blob.setContents(file.blob.getContents() + '\nUpdated on: ' + new Date());
+            // Commit the changes to the file.
+            file.commit('Updated through GitFile interface.', function(err, commit) {
+                console.log('Created commit with SHA "%s"', commit.sha);
+                featureBranch.push(commit, function(error) {
+                    console.log(error);
+                    featureBranch.createPullRequest(master, 'Automated PR test', 'Some hot body here.', function(error, pr) {
+                        console.log('Created PR #%s', pr.number);
+                    });
+                });
             });
         });
     });
+
+    /* The long manual way to do it: */
+    master.getCommit(function(err, commit) {
+        console.log('commit: ' + commit.sha);
+
+        commit.getTree(function(err, tree) {
+            console.log(tree);
+
+            tree.getBlob('temp.txt', function(err, blob) {
+                console.log(('old blob contents:\n' +
+                    '========================================================' +
+                    '\n%s\n' +
+                    '========================================================'),
+                    blob.getContents());
+
+                blob.setContents(blob.getContents() + '\nUpdated on: ' + new Date());
+
+                console.log(('new blob contents:\n' +
+                    '========================================================' +
+                    '\n%s\n' +
+                    '========================================================'),
+                    blob.getContents());
+
+                blob.update(function(err, blobData) {
+                    console.log('new blob sha: ', blobData.sha);
+
+                    tree.setBlob('temp.txt', blobData.sha);
+
+                    tree.update(function(err, newTree) {
+                        console.log('New Tree:');
+                        console.log(newTree);
+
+                        var message = 'This commit is being created through the GitHub Git Data API.';
+                        commit.commitTree(newTree, message, function(err, newCommit) {
+                            console.log('Commit created:');
+                            console.log(newCommit);
+                            master.push(newCommit, function(err) {
+                                console.log('push done!');
+                                master.getCommit(function(error, latestCommit) {
+                                    console.log(latestCommit);
+                                });
+                            });
+                        });
+
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
 });
-
-/**
- * Same file change, but putting the changes in a pull request against the
- * master branch.
- */
-//
-//gdata.getBranch('master', function(error, master) {
-//    master.createBranch('feature-branch', function(error, featureBranch) {
-//        featureBranch.getFile('path/to/file', function(error, file) {
-//            // Update something within the file.
-//            file.contents = fileObject.contents.replace('foo', 'bar');
-//            // Commit the changes to the file.
-//            file.commit('Commit message', function(error, commit) {
-//                console.log('Created commit with SHA "%s"', commit.sha);
-//                featureBranch.push(commit, function(error) {
-//                    featureBranch.createPullRequest({
-//                        title: 'PR title',
-//                        body: 'optional',
-//                        base: master
-//                    }, function(error, pr) {
-//                        console.log('Created PR #%s', pr.number);
-//                    });
-//                });
-//            });
-//        });
-//    });
-//});
-
