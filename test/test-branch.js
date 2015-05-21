@@ -233,7 +233,7 @@ describe('branch object', function() {
                         createReference: function(params, callback) {
                             expect(params.user).to.equal('my-organization');
                             expect(params.repo).to.equal('my-repository');
-                            expect(params.ref).to.equal('heads/branch-name');
+                            expect(params.ref).to.equal('refs/heads/branch-name');
                             expect(params.sha).to.equal('master-branch-commit-sha');
                             callback(null, mockRefData);
                         }
@@ -251,6 +251,39 @@ describe('branch object', function() {
                 done();
             });
         });
+    });
+
+    describe('when creating a pull request', function() {
+
+        it('calls the github client properly', function(done) {
+            var mockBaseBranch = {
+                    ref: 'refs/heads/feature'
+                }
+              , mockClient = {
+                    user: 'my-organization'
+                  , repo: 'my-repository'
+                  , pullRequests: {
+                        create: function(params, callback) {
+                            expect(params.user).to.equal('my-organization');
+                            expect(params.repo).to.equal('my-repository');
+                            expect(params.title).to.equal('pr-title');
+                            expect(params.body).to.equal('pr-body');
+                            expect(params.head).to.equal('master');
+                            expect(params.base).to.equal('feature');
+                            callback(null, 'mock-pr-data');
+                        }
+                    }
+                }
+              , branch = new Branch(mockRefMaster, mockClient)
+              ;
+
+            branch.createPullRequest(mockBaseBranch, 'pr-title', 'pr-body', function(error, prData) {
+                assert.notOk(error);
+                expect(prData).to.equal('mock-pr-data');
+                done();
+            });
+        });
+
     });
 
 });
