@@ -1,6 +1,6 @@
 {
   "name": "github-data",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tools for running git commands without git.",
   "main": "index.js",
   "scripts": {
