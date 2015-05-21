@@ -213,4 +213,44 @@ describe('branch object', function() {
 
     });
 
+    describe('when creating a new branch', function() {
+
+        it('uses current sha to create a new reference through API', function(done) {
+            var mockRefData = {
+                    ref: 'refs/heads/branch-name'
+                  , object: { sha: 'a075829d6b803ce74acf407b6d19e8434f1cf653'}
+                }
+              , mockCommit = {
+                    sha: 'master-branch-commit-sha'
+                }
+              , mockGetCommit = function(callback) {
+                    callback(null, mockCommit);
+                }
+              , mockClient = {
+                    user: 'my-organization'
+                  , repo: 'my-repository'
+                  , gitdata: {
+                        createReference: function(params, callback) {
+                            expect(params.user).to.equal('my-organization');
+                            expect(params.repo).to.equal('my-repository');
+                            expect(params.ref).to.equal('heads/branch-name');
+                            expect(params.sha).to.equal('master-branch-commit-sha');
+                            callback(null, mockRefData);
+                        }
+                    }
+                }
+              ;
+            var branch = new Branch(mockRefMaster, mockClient);
+            branch.getCommit = mockGetCommit;
+
+            branch.createBranch('branch-name', function(error, newBranch) {
+                assert.notOk(error);
+                expect(newBranch).to.instanceOf(Branch);
+                expect(newBranch.ref).to.equal('refs/heads/branch-name');
+                expect(newBranch.sha).to.equal('a075829d6b803ce74acf407b6d19e8434f1cf653');
+                done();
+            });
+        });
+    });
+
 });
